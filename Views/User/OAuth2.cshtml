@@ -1,0 +1,282 @@
+<html>
+    @{
+        ViewData["AppDisplayName"] = "SimpleBlazorApp";
+        ViewData["AppURI"] = "http://localhost:5123";
+        bool areUsersLogged = ((ICollection<SimpleDotNETAPI.Controllers.LoggedUser>)ViewData["LoggedUsers"]).Count > 0;
+    }
+    <head>
+        <style>
+            body {
+                margin: 0;
+                color: rgb(32, 33, 36);
+                font-family: sans-serif;
+            }
+
+            .auth-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100dvh;
+            }
+
+            .auth-container .auth-content {
+                display: flex;
+                flex-direction: column;
+                border: 1px solid #dadce0;
+                border-radius: 8px;
+                max-width: 448px;
+            }
+
+            .auth-container .auth-content .auth-header {
+                border-bottom: 1px solid #dadce0;
+                line-height: 16px;
+                padding: 8px;
+                padding-inline: 16px;
+                color: #0008;
+                font-weight: 600;
+                font-size: 14px;
+            }
+
+            .auth-container .auth-content .auth-body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 48px;
+            }
+
+            .auth-container .auth-content .auth-body.hidden {
+                display: none;
+            }
+
+            .auth-container .auth-content .auth-body h2 {
+                font-weight: 400;
+            }
+
+            .auth-container .auth-content .auth-body h4 {
+                font-weight: normal;
+                margin: 0;
+            }
+
+            .auth-container .auth-content .auth-body .auth-accounts,
+            .auth-container .auth-content .auth-body .auth-form {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                margin: 32px;
+                margin-inline: 0;
+            }
+
+            .auth-container .auth-content .auth-body .auth-accounts .auth-account {
+                position: relative;
+                display: flex;
+                border-bottom: 1px solid #dadce0;
+                padding: 12px;
+                padding-inline: 0;
+                cursor: pointer;
+                margin: 0;
+            }
+
+            .auth-container .auth-content .auth-body .auth-accounts .auth-account::before {
+                content: " ";
+                position: absolute;
+                left: -48px;
+                right: -48px;
+                background: rgba(26, 115, 232, 0);
+                height: 100%;
+                top: 0;
+                transition: all .5s;
+            }
+
+            .auth-container .auth-content .auth-body .auth-accounts .auth-account:hover::before {
+                background: rgba(26, 115, 232, .2);
+            }
+
+            .auth-container .auth-content .auth-body .auth-accounts .auth-account .auth-icon {
+                width: 28px;
+                height: 28px;
+                margin-right: 12px;  
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .auth-container .auth-content .auth-body .auth-accounts .auth-account .auth-icon img {
+                width: 28px;
+                height: 28px;
+                border-radius: 14px;
+            }
+
+            .auth-container .auth-content .auth-body .auth-accounts .auth-account .auth-account-content {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+            }
+
+            .auth-container .auth-content .auth-body .auth-accounts .auth-account .auth-account-content .auth-account-title {
+                font-size: 14px;
+                font-weight: 600;
+                color: rgb(60, 64, 67);
+            }
+
+            .auth-container .auth-content .auth-body .auth-accounts .auth-account .auth-account-content .auth-account-title:only-child {
+                line-height: 12px;
+                padding-top: 4px;
+            }
+
+            .auth-container .auth-content .auth-body .auth-accounts .auth-account .auth-account-content .auth-account-subtitle {
+                color: rgb(95, 99, 104);
+                font-size: 12px;
+                text-align: left;
+                line-height: 1.3333333;
+                word-break: break-all;
+            }
+
+            .auth-container .auth-content .auth-body .auth-form .auth-input {
+                margin: 8px;
+                margin-inline: 0px;
+                position: relative;
+            }
+
+            .auth-container .auth-content .auth-body .auth-form .auth-input .auth-input-label {
+                position: absolute;
+                background-color: white;
+                left: 8px;
+                top: 8px;
+                padding: 6px;  
+                padding-bottom: 0;
+                font-size: 14px;
+                transition: all .1s;
+            }
+
+            .auth-container .auth-content .auth-body .auth-form .auth-input .auth-input-field:focus ~ .auth-input-label,
+            .auth-container .auth-content .auth-body .auth-form .auth-input .auth-input-field:not(:placeholder-shown) ~ .auth-input-label {
+                top: -12px;
+                font-size: 16px;
+            }
+
+            .auth-container .auth-content .auth-body .auth-form .auth-input .auth-input-field {
+                width: 100%;
+                padding: 12px;
+            }
+
+            .auth-container .auth-content .auth-body .auth-form .auth-input .auth-input-field:focus {
+                outline: none;
+                border: 1px solid #2196f3;
+            }
+
+            .auth-container .auth-content .auth-body .auth-form .auth-input input[type="submit"] {
+                cursor: pointer;
+            }
+
+            .auth-container .auth-content .auth-body .auth-disclaimer {
+                color: rgb(95,99,104);
+                font-size: 14px;
+                line-height: 1.4286;
+                margin-top: 32px;
+            }
+        </style>
+        <title>LogIn | SimpleDOTNetAPI</title>
+    </head>
+    <body>
+        <div class="auth-container">
+            <div class="auth-content">
+                <div class="auth-header">
+                    Fazer login com o SimpleDOTNetAPI
+                </div>
+                @{
+                    if(areUsersLogged)
+                    {
+                        <div id="loggedBody" class="auth-body">
+                            <h2>Escolha uma conta</h2>
+                            <h4>para prosseguir para <a href="">@ViewData["AppDisplayName"]</a></h4>
+
+                            <div class="auth-accounts">
+                                @{
+                                    foreach(SimpleDotNETAPI.Controllers.LoggedUser loggedUser in (ICollection<SimpleDotNETAPI.Controllers.LoggedUser>)ViewData["LoggedUsers"])
+                                    {
+                                        <form class="auth-account" method="post" action="/user/authwithtoken" onclick="(e => e.submit())(this)">
+                                            <div class="auth-icon">
+                                                <img src="@loggedUser.Avatar"/>
+                                            </div>
+                                            <div class="auth-account-content">
+                                                <div class="auth-account-title">
+                                                    @loggedUser.DisplayName
+                                                </div>
+                                                <div class="auth-account-subtitle">
+                                                    @loggedUser.Email
+                                                </div>
+                                            </div>
+                                            <input hidden type="text" name="Callback" value="@ViewData["Callback"]" />
+                                            <input hidden type="text" name="Token" value="@loggedUser.Token" />
+                                        </form>
+                                    }
+                                }
+                                <div class="auth-account" onclick="loginWithNewAccount()">
+                                    <div class="auth-icon">
+                                        <svg aria-hidden="true" class="stUf5b" fill="currentColor" focusable="false" width="20px" height="20px" viewBox="0 0 24 24" xmlns="https://www.w3.org/2000/svg">
+                                            <path d="M12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10c5.52,0,10-4.48,10-10C22,6.48,17.52,2,12,2z M7.07,18.28 c0.43-0.9,3.05-1.78,4.93-1.78s4.51,0.88,4.93,1.78C15.57,19.36,13.86,20,12,20S8.43,19.36,7.07,18.28z M18.36,16.83 c-1.43-1.74-4.9-2.33-6.36-2.33s-4.93,0.59-6.36,2.33C4.62,15.49,4,13.82,4,12c0-4.41,3.59-8,8-8c4.41,0,8,3.59,8,8 C20,13.82,19.38,15.49,18.36,16.83z"></path>
+                                            <path d="M12,6c-1.94,0-3.5,1.56-3.5,3.5S10.06,13,12,13c1.94,0,3.5-1.56,3.5-3.5S13.94,6,12,6z M12,11c-0.83,0-1.5-0.67-1.5-1.5 C10.5,8.67,11.17,8,12,8c0.83,0,1.5,0.67,1.5,1.5C13.5,10.33,12.83,11,12,11z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="auth-account-content">
+                                        <div class="auth-account-title">
+                                            Usar outra conta
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        
+                            <div class="auth-disclaimer">
+                                Para continuar, o SimpleDOTNetAPI compartilhará com o app @ViewData["AppDisplayName"] seu nome, endereço de e-mail, idioma preferido e sua foto do perfil. Consulte a Política de Privacidade e os Termos de Serviço do app @ViewData["AppDisplayName"] antes de usá-lo.
+                            </div>
+
+                        </div>
+                    }
+                    <form id="unloggedBody" class="auth-body @( areUsersLogged ? "hidden" : "visible")" method="post" action="/user/authwithemailandpassword">
+                        <h2>Entre no SimpleDOTNetAPI</h2>
+                        <h4>para prosseguir para <a href="@ViewData["Callback"]">@ViewData["AppDisplayName"]</a></h4>
+                        <div class="auth-form">
+                            <div class="auth-input">
+                                <input type="email" name="Email" class="auth-input-field" placeholder=" "/>
+                                <div class="auth-input-label">
+                                    Email
+                                </div>
+                            </div>
+                            <div class="auth-input">
+                                <input type="password" name="Password" class="auth-input-field" placeholder=" "/>
+                                <div class="auth-input-label">
+                                    Password
+                                </div>
+                            </div>
+                            <input hidden type="text" name="Callback" value="@ViewData["Callback"]" />
+                            <div class="auth-input">
+                                <button class="auth-input-field" type="submit">LOGIN</button>
+                            </div>
+                        </div>
+                        
+                        <div class="auth-disclaimer">
+                            Para continuar, o SimpleDOTNetAPI compartilhará com o app @ViewData["AppDisplayName"] seu nome, endereço de e-mail, idioma preferido e sua foto do perfil. Consulte a Política de Privacidade e os Termos de Serviço do app @ViewData["AppDisplayName"] antes de usá-lo.
+                        </div>
+                    </form>
+                }
+            </div>
+            
+        </div>
+        <script>
+            window.addEventListener("load", () => {
+            });
+
+            function loginWithNewAccount(){
+                const loggedBody = document.getElementById("loggedBody");
+                const unloggedBody = document.getElementById("unloggedBody");
+
+                loggedBody.classList.remove("visible");
+                loggedBody.classList.add("hidden");
+                unloggedBody.classList.remove("hidden");
+                unloggedBody.classList.add("visible");
+
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,16 @@
+version: '3.0'
+services:
+  api:
+    image: dotnet e os caraio
+    volumes:
+      - ./:/app
+    ports:
+      - 80:80
+    depends_on:
+      - database
+  database:
+    image: imageName
+    volumes:
+      - ./db_data:/something
+    ports:
+      - 50:50
